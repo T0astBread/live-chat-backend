@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"time"
 
 	"t0ast.cc/symflower-live-chat/graph/generated"
 	"t0ast.cc/symflower-live-chat/graph/model"
@@ -42,11 +43,36 @@ func (r *queryResolver) Messages(ctx context.Context) ([]*model.Message, error) 
 	}, nil
 }
 
+func (r *subscriptionResolver) MessagePosted(ctx context.Context) (<-chan *model.Message, error) {
+	msgChan := make(chan *model.Message, 0)
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				println("Closed messagePosted subscription")
+				return
+			default:
+			}
+			msgChan <- &model.Message{
+				ID:      1,
+				Content: "New message!",
+				Poster:  dummyUser2,
+			}
+			time.Sleep(2 * time.Second)
+		}
+	}()
+	return msgChan, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+// Subscription returns generated.SubscriptionResolver implementation.
+func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type subscriptionResolver struct{ *Resolver }

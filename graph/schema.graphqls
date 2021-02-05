@@ -30,3 +30,7 @@ type Mutation {
   registerUser(input: NewUser!): User!
   postMessage(input: NewMessage!): Message!
 }
+
+type Subscription {
+  messagePosted: Message!
+}
