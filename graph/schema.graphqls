@@ -15,6 +15,7 @@ type Message {
 
 type Query {
   messages: [Message!]!
+  users: [User!]!
 }
 
 input NewUser {

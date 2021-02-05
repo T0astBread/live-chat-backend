@@ -43,6 +43,13 @@ func (r *queryResolver) Messages(ctx context.Context) ([]*model.Message, error) 
 	}, nil
 }
 
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	return []*model.User{
+		dummyUser,
+		dummyUser2,
+	}, nil
+}
+
 func (r *subscriptionResolver) MessagePosted(ctx context.Context) (<-chan *model.Message, error) {
 	msgChan := make(chan *model.Message, 0)
 	go func() {
