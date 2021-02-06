@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/playground"
+	"t0ast.cc/symflower-live-chat/db"
 	"t0ast.cc/symflower-live-chat/graph"
 	"t0ast.cc/symflower-live-chat/graph/generated"
 	"t0ast.cc/symflower-live-chat/server"
@@ -19,6 +20,8 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+
+	db.Reset()
 
 	schema := generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}})
 	srv := server.New(schema)

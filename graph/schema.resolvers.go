@@ -5,7 +5,7 @@ package graph
 
 import (
 	"context"
-	"time"
+	"fmt"
 
 	"t0ast.cc/symflower-live-chat/db"
 	"t0ast.cc/symflower-live-chat/graph/generated"
@@ -17,31 +17,11 @@ func (r *mutationResolver) RegisterUser(ctx context.Context, input model.NewUser
 }
 
 func (r *mutationResolver) PostMessage(ctx context.Context, input model.NewMessage) (*model.Message, error) {
-	return &model.Message{
-		ID:      1,
-		Content: "This is my message",
-		Poster:  dummyUser,
-	}, nil
+	return db.InsertMessage(input)
 }
 
 func (r *queryResolver) Messages(ctx context.Context) ([]*model.Message, error) {
-	return []*model.Message{
-		{
-			ID:      1,
-			Content: "This is my message",
-			Poster:  dummyUser,
-		},
-		{
-			ID:      2,
-			Content: "Lorem ipsum",
-			Poster:  dummyUser2,
-		},
-		{
-			ID:      3,
-			Content: "dolor sit amet",
-			Poster:  dummyUser,
-		},
-	}, nil
+	return db.GetMessages(), nil
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
@@ -49,24 +29,17 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 }
 
 func (r *subscriptionResolver) MessagePosted(ctx context.Context) (<-chan *model.Message, error) {
-	msgChan := make(chan *model.Message, 0)
+	sub := make(chan *model.Message, 0)
+	subHandle := db.RegisterMessageSubscription(sub)
+	fmt.Printf("Registered message subscription %d\n", subHandle)
 	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				println("Closed messagePosted subscription")
-				return
-			default:
-			}
-			msgChan <- &model.Message{
-				ID:      1,
-				Content: "New message!",
-				Poster:  dummyUser2,
-			}
-			time.Sleep(4 * time.Second)
+		select {
+		case <-ctx.Done():
+			fmt.Printf("Un-registering message subscription %d...\n", subHandle)
+			db.UnregisterMessageSubscription(subHandle)
 		}
 	}()
-	return msgChan, nil
+	return sub, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
