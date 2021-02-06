@@ -23,7 +23,7 @@ input NewUser {
 }
 
 input NewMessage {
-  posterId: String!
+  posterId: Int!
   content: String!
 }
 
