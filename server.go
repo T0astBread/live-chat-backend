@@ -14,7 +14,7 @@ import (
 
 const defaultPort = "8081"
 
-//go:generate gqlgen generate
+//go:generate go run github.com/99designs/gqlgen generate
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
