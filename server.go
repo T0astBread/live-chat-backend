@@ -12,7 +12,7 @@ import (
 	"t0ast.cc/symflower-live-chat/server"
 )
 
-const defaultPort = "8080"
+const defaultPort = "8081"
 
 //go:generate gqlgen generate
 func main() {
