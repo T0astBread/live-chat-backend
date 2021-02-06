@@ -65,7 +65,7 @@ func (r *subscriptionResolver) MessagePosted(ctx context.Context) (<-chan *model
 				Content: "New message!",
 				Poster:  dummyUser2,
 			}
-			time.Sleep(2 * time.Second)
+			time.Sleep(4 * time.Second)
 		}
 	}()
 	return msgChan, nil
