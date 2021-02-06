@@ -7,12 +7,13 @@ import (
 	"context"
 	"time"
 
+	"t0ast.cc/symflower-live-chat/db"
 	"t0ast.cc/symflower-live-chat/graph/generated"
 	"t0ast.cc/symflower-live-chat/graph/model"
 )
 
 func (r *mutationResolver) RegisterUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	return dummyUser, nil
+	return db.InsertUser(input)
 }
 
 func (r *mutationResolver) PostMessage(ctx context.Context, input model.NewMessage) (*model.Message, error) {
@@ -44,10 +45,7 @@ func (r *queryResolver) Messages(ctx context.Context) ([]*model.Message, error) 
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	return []*model.User{
-		dummyUser,
-		dummyUser2,
-	}, nil
+	return db.GetUsers(), nil
 }
 
 func (r *subscriptionResolver) MessagePosted(ctx context.Context) (<-chan *model.Message, error) {
